@@ -3,6 +3,7 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,7 +16,22 @@ if (!fs.existsSync(publicDir)){
 
 const DB_FILE = path.join(publicDir, 'database.json');
 const PORT = 3000;
-const HOST = '0.0.0.0'; // Listen on all network interfaces
+
+// Function to get the machine's specific Network IP (not localhost)
+const getNetworkIP = () => {
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+            // Skip internal (127.0.0.1) and non-ipv4
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return '127.0.0.1'; // Fallback
+};
+
+const HOST = getNetworkIP(); // Bind specifically to the network IP
 
 // Initialize DB file if it doesn't exist
 if (!fs.existsSync(DB_FILE)) {
@@ -103,4 +119,5 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, HOST, () => {
     console.log(`\n🚀 Database Server running at http://${HOST}:${PORT}`);
     console.log(`📂 Database file: ${DB_FILE}`);
+    console.log(`⚠️  Note: If you strictly bound to IP, localhost access may not work. Use the IP above in your app settings.`);
 });
