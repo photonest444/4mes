@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
         viteSingleFile()
     ],
     define: {
-      'process.env.API_KEY': JSON.stringify(env.API_KEY || process.env.API_KEY || ''),
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || process.env.API_KEY || 'AIzaSyAiE2yGMxcaXhy1DQc-3dVGKbJhvAjmN7w'),
     },
     server: {
       host: '0.0.0.0', // Allows access from network IP
